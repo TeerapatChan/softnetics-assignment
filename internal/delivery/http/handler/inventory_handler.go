@@ -73,7 +73,7 @@ func (h *InventoryHandler) DeleteItemById(c *fiber.Ctx) error {
 	if err := h.service.DeleteItemById(id); err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.Status(200).JSON(fiber.Map{"id": id})
+	return c.Status(200).JSON(response.DeleteItemByIdResponse{ID: id})
 }
 
 func (h *InventoryHandler) UpdateItemById(c *fiber.Ctx) error {
@@ -99,5 +99,5 @@ func (h *InventoryHandler) UpdateItemById(c *fiber.Ctx) error {
 	if err := h.service.UpdateItemById(id, &item); err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.Status(200).JSON(fiber.Map{"id": id})
+	return c.Status(200).JSON(response.UpdateItemByIdResponse{ID: id})
 }
