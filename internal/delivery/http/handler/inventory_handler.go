@@ -42,7 +42,6 @@ func (h *InventoryHandler) CreateItem(c *fiber.Ctx) error {
 		Price:       req.Price,
 		Amount:      req.Amount,
 		At:          req.At,
-		PNL:         0,
 	}
 
 	if err := h.service.CreateItem(&item); err != nil {

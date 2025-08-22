@@ -16,5 +16,4 @@ type InventoryItem struct {
 	Price       float64   `json:"price"`
 	Amount      int       `json:"amount"`
 	At          time.Time `json:"at"`
-	PNL         float64   `json:"PNL,omitempty"`
 }
