@@ -2,7 +2,9 @@ package usecases
 
 import (
 	"errors"
+	"time"
 
+	"github.com/TeerapatChan/inventory-management-api/internal/delivery/http/response"
 	"github.com/TeerapatChan/inventory-management-api/internal/entities"
 	"github.com/TeerapatChan/inventory-management-api/internal/repository"
 )
@@ -45,10 +47,10 @@ func (s *InventoryService) CalculatePNL(item *entities.InventoryItem) float64 {
 		return 0
 	}
 
-	var revenue float64
-	var currentAverage float64
-	var currentTotalItems int64
-	var currentSoldItems int64
+	revenue := 0.0
+	currentAverage := 0.0
+	currentTotalItems := 0
+	currentSoldItems := 0
 
 	for _, p := range allItems {
 		if p.Status == entities.BUY {
@@ -68,4 +70,63 @@ func (s *InventoryService) CalculatePNL(item *entities.InventoryItem) float64 {
 
 	pnl := revenue - currentAverage*float64(currentSoldItems)
 	return pnl
+}
+
+func (s *InventoryService) GetItemSummaryByName(productName string) ([]response.InventoryItemResponse, int, int, int, float64, error) {
+	now := time.Now()
+	monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.Local)
+
+	allItems, err := s.repo.FindItemsByProduct(productName)
+	if err != nil {
+		return nil, 0, 0, 0, 0, err
+	}
+
+	totalAmount := 0
+	for _, item := range allItems {
+		totalAmount += item.Amount
+	}
+
+	data := make([]response.InventoryItemResponse, 0, len(allItems))
+	for _, item := range allItems {
+		var pnl *float64
+		if item.Status == entities.SELL {
+			calculatedPNL := s.CalculatePNL(&item)
+			pnl = &calculatedPNL
+		}
+		data = append(data, response.InventoryItemResponse{
+			ID:          item.ID,
+			ProductName: item.ProductName,
+			Status:      item.Status,
+			Price:       item.Price,
+			Amount:      item.Amount,
+			At:          item.At,
+			PNL:         pnl,
+		})
+	}
+
+	boughtThisMonth, err := s.repo.FindBoughtItemsSince(productName, monthStart, now)
+	if err != nil {
+		return nil, 0, 0, 0, 0, err
+	}
+	soldThisMonth, err := s.repo.FindSoldItemsSince(productName, monthStart, now)
+	if err != nil {
+		return nil, 0, 0, 0, 0, err
+	}
+
+	cost := 0.0
+	productsBoughtLatestMonth := 0
+	for _, b := range boughtThisMonth {
+		productsBoughtLatestMonth += b.Amount
+		cost += b.Price * float64(b.Amount)
+	}
+
+	revenue := 0.0
+	productsSoldLatestMonth := 0
+	for _, s := range soldThisMonth {
+		productsSoldLatestMonth += s.Amount
+		revenue += s.Price * float64(s.Amount)
+	}
+
+	latestMonthProfit := revenue - cost
+	return data, totalAmount, productsBoughtLatestMonth, productsSoldLatestMonth, latestMonthProfit, nil
 }

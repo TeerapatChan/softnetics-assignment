@@ -62,9 +62,35 @@ func (r *InventoryRepository) UpdateById(id string, item *entities.InventoryItem
 	return nil
 }
 
+func (r *InventoryRepository) FindItemsByProduct(productName string) ([]entities.InventoryItem, error) {
+	var items []entities.InventoryItem
+	if err := r.db.Where("product_name = ?", productName).Order("at ASC").Find(&items).Error; err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 func (r *InventoryRepository) FindItemsByProductUntil(productName string, until time.Time) ([]entities.InventoryItem, error) {
 	var items []entities.InventoryItem
 	if err := r.db.Where("product_name = ? AND at <= ?", productName, until).Order("at ASC").Find(&items).Error; err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+func (r *InventoryRepository) FindBoughtItemsSince(productName string, from, to time.Time) ([]entities.InventoryItem, error) {
+	var items []entities.InventoryItem
+	if err := r.db.Where("product_name = ? AND status = ? AND at >= ? AND at <= ?", productName, entities.BUY, from, to).
+		Find(&items).Error; err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+func (r *InventoryRepository) FindSoldItemsSince(productName string, from, to time.Time) ([]entities.InventoryItem, error) {
+	var items []entities.InventoryItem
+	if err := r.db.Where("product_name = ? AND status = ? AND at >= ? AND at <= ?", productName, entities.SELL, from, to).
+		Find(&items).Error; err != nil {
 		return nil, err
 	}
 	return items, nil

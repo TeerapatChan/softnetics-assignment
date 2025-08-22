@@ -107,3 +107,21 @@ func (h *InventoryHandler) UpdateItemById(c *fiber.Ctx) error {
 	}
 	return c.Status(200).JSON(response.UpdateItemByIdResponse{ID: id})
 }
+
+func (h *InventoryHandler) GetItemSummaryByName(c *fiber.Ctx) error {
+	name := c.Params("name")
+
+	items, totalAmount, productsBoughtInLatestMonth, ProductsSoldInLatestMonth, latestMonthProfit, err := h.service.GetItemSummaryByName(name)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(response.GetInventoryByProductResponse{
+		Data:                        items,
+		TotalAmount:                 totalAmount,
+		ProductsBoughtInLatestMonth: productsBoughtInLatestMonth,
+		ProductsSoldInLatestMonth:   ProductsSoldInLatestMonth,
+		LatestMonthProfit:           latestMonthProfit,
+	})
+
+}

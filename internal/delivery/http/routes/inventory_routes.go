@@ -16,11 +16,12 @@ func RegisterInventoryRoutes(router fiber.Router, db *gorm.DB) {
 	validator := validator.New()
 	h := handler.NewInventoryHandler(service, validator)
 
+	router.Get("/:name", h.GetItemSummaryByName)
+
 	items := router.Group("/items")
 
 	items.Post("/", h.CreateItem)
 	items.Get("/:id", h.GetItemById)
 	items.Delete("/:id", h.DeleteItemById)
 	items.Patch("/:id", h.UpdateItemById)
-
 }
