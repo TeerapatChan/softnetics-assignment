@@ -32,3 +32,7 @@ func (s *InventoryService) GetItemById(id string) (*entities.InventoryItem, erro
 
 	return item, nil
 }
+
+func (s *InventoryService) DeleteItemById(id string) error {
+	return s.repo.DeleteById(id)
+}

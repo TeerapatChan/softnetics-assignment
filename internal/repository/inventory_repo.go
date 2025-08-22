@@ -36,3 +36,14 @@ func (r *InventoryRepository) FindById(id string) (*entities.InventoryItem, erro
 
 	return &item, nil
 }
+
+func (r *InventoryRepository) DeleteById(id string) error {
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		return err
+	}
+	if err := r.db.Delete(&entities.InventoryItem{}, intID).Error; err != nil {
+		return err
+	}
+	return nil
+}

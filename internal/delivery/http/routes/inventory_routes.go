@@ -20,5 +20,5 @@ func RegisterInventoryRoutes(router fiber.Router, db *gorm.DB) {
 
 	items.Post("/", h.CreateItem)
 	items.Get("/:id", h.GetItemById)
-
+	items.Delete("/:id", h.DeleteItemById)
 }

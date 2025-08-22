@@ -66,3 +66,12 @@ func (h *InventoryHandler) GetItemById(c *fiber.Ctx) error {
 
 	return c.JSON(resp)
 }
+
+func (h *InventoryHandler) DeleteItemById(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	if err := h.service.DeleteItemById(id); err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(200).JSON(fiber.Map{"id": id})
+}

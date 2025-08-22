@@ -7,3 +7,7 @@ type CreateItemResponse struct {
 }
 
 type GetItemByIdResponse = entities.InventoryItem
+
+type DeleteItemByIdResponse struct {
+	ID string `json:"id"`
+}
