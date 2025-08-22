@@ -2,6 +2,7 @@ package repository
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/TeerapatChan/inventory-management-api/internal/entities"
 	"gorm.io/gorm"
@@ -59,4 +60,12 @@ func (r *InventoryRepository) UpdateById(id string, item *entities.InventoryItem
 	}
 
 	return nil
+}
+
+func (r *InventoryRepository) FindItemsByProductUntil(productName string, until time.Time) ([]entities.InventoryItem, error) {
+	var items []entities.InventoryItem
+	if err := r.db.Where("product_name = ? AND at <= ?", productName, until).Order("at ASC").Find(&items).Error; err != nil {
+		return nil, err
+	}
+	return items, nil
 }

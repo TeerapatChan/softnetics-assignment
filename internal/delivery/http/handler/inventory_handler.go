@@ -54,6 +54,12 @@ func (h *InventoryHandler) GetItemById(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
 	}
 
+	var pnl *float64
+	if item.Status != entities.BUY {
+		calculatedPNL := h.service.CalculatePNL(item)
+		pnl = &calculatedPNL
+	}
+
 	resp := response.GetItemByIdResponse{
 		ID:          item.ID,
 		ProductName: item.ProductName,
@@ -61,7 +67,7 @@ func (h *InventoryHandler) GetItemById(c *fiber.Ctx) error {
 		Price:       item.Price,
 		Amount:      item.Amount,
 		At:          item.At,
-		PNL:         item.PNL,
+		PNL:         pnl,
 	}
 
 	return c.JSON(resp)

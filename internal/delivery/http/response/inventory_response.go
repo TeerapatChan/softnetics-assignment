@@ -1,12 +1,24 @@
 package response
 
-import "github.com/TeerapatChan/inventory-management-api/internal/entities"
+import (
+	"time"
+
+	"github.com/TeerapatChan/inventory-management-api/internal/entities"
+)
 
 type CreateItemResponse struct {
 	ID uint `json:"id"`
 }
 
-type GetItemByIdResponse = entities.InventoryItem
+type GetItemByIdResponse struct {
+	ID          uint            `json:"id"`
+	ProductName string          `json:"product_name"`
+	Status      entities.Status `json:"status"`
+	Price       float64         `json:"price"`
+	Amount      int64           `json:"amount"`
+	At          time.Time       `json:"at"`
+	PNL         *float64        `json:"PNL,omitempty"`
+}
 
 type DeleteItemByIdResponse struct {
 	ID string `json:"id"`
