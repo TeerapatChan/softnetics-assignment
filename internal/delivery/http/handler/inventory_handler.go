@@ -19,6 +19,12 @@ func NewInventoryHandler(service *usecases.InventoryService, validator *validato
 	return &InventoryHandler{service, validator}
 }
 
+// @Summary		Create Item
+// @Description	Create a new inventory item
+// @Tags			inventory
+// @Router			/inventory/items [post]
+// @Success		201			{object}	response.CreateItemResponse
+// @Failure		400			{object}	map[string]interface{}
 func (h *InventoryHandler) CreateItem(c *fiber.Ctx) error {
 	var req request.CreateItemRequest
 
@@ -46,6 +52,12 @@ func (h *InventoryHandler) CreateItem(c *fiber.Ctx) error {
 	return c.Status(201).JSON(response.CreateItemResponse{ID: item.ID})
 }
 
+// @Summary		Get Item By ID
+// @Description	Get an inventory item by its ID
+// @Tags			inventory
+// @Router			/inventory/items/{id} [get]
+// @Success		200			{object}	response.GetItemByIdResponse
+// @Failure		404			{object}	map[string]interface{}
 func (h *InventoryHandler) GetItemById(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -73,6 +85,13 @@ func (h *InventoryHandler) GetItemById(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+// @Summary		Delete Item By ID
+// @Description	Delete an inventory item by its ID
+// @Tags			inventory
+// @Router			/inventory/items/{id} [delete]
+// @Success		200			{object}	response.DeleteItemByIdResponse
+// @Failure		400			{object}	map[string]interface{}
+// @Failure		404			{object}	map[string]interface{}
 func (h *InventoryHandler) DeleteItemById(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -82,6 +101,13 @@ func (h *InventoryHandler) DeleteItemById(c *fiber.Ctx) error {
 	return c.Status(200).JSON(response.DeleteItemByIdResponse{ID: id})
 }
 
+// @Summary		Update Item By ID
+// @Description	Update an inventory item by its ID
+// @Tags			inventory
+// @Router			/inventory/items/{id} [put]
+// @Success		200			{object}	response.UpdateItemByIdResponse
+// @Failure		400			{object}	map[string]interface{}
+// @Failure		404			{object}	map[string]interface{}
 func (h *InventoryHandler) UpdateItemById(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -108,10 +134,16 @@ func (h *InventoryHandler) UpdateItemById(c *fiber.Ctx) error {
 	return c.Status(200).JSON(response.UpdateItemByIdResponse{ID: id})
 }
 
-func (h *InventoryHandler) GetItemSummaryByName(c *fiber.Ctx) error {
-	name := c.Params("name")
+// @Summary		Get Item Summary By Name
+// @Description	Get a summary of inventory items by product name
+// @Tags			inventory
+// @Router			/inventory/{productName} [get]
+// @Success		200			{object}	response.GetInventoryByProductResponse
+// @Failure		404			{object}	map[string]interface{}
+func (h *InventoryHandler) GetItemSummaryByProductName(c *fiber.Ctx) error {
+	productName := c.Params("productName")
 
-	items, totalAmount, productsBoughtInLatestMonth, ProductsSoldInLatestMonth, latestMonthProfit, err := h.service.GetItemSummaryByName(name)
+	items, totalAmount, productsBoughtInLatestMonth, productsSoldInLatestMonth, latestMonthProfit, err := h.service.GetItemSummaryByProductName(productName)
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -120,7 +152,7 @@ func (h *InventoryHandler) GetItemSummaryByName(c *fiber.Ctx) error {
 		Data:                        items,
 		TotalAmount:                 totalAmount,
 		ProductsBoughtInLatestMonth: productsBoughtInLatestMonth,
-		ProductsSoldInLatestMonth:   ProductsSoldInLatestMonth,
+		ProductsSoldInLatestMonth:   productsSoldInLatestMonth,
 		LatestMonthProfit:           latestMonthProfit,
 	})
 

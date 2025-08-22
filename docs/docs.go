@@ -121,7 +121,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/inventory/{name}": {
+        "/inventory/{productName}": {
             "get": {
                 "description": "Get a summary of inventory items by product name",
                 "tags": [
