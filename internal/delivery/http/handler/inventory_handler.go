@@ -45,3 +45,24 @@ func (h *InventoryHandler) CreateItem(c *fiber.Ctx) error {
 
 	return c.Status(201).JSON(response.CreateItemResponse{ID: item.ID})
 }
+
+func (h *InventoryHandler) GetItemById(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	item, err := h.service.GetItemById(id)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	resp := response.GetItemByIdResponse{
+		ID:          item.ID,
+		ProductName: item.ProductName,
+		Status:      item.Status,
+		Price:       item.Price,
+		Amount:      item.Amount,
+		At:          item.At,
+		PNL:         item.PNL,
+	}
+
+	return c.JSON(resp)
+}

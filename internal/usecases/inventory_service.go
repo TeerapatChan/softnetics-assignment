@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"errors"
+
 	"github.com/TeerapatChan/inventory-management-api/internal/entities"
 	"github.com/TeerapatChan/inventory-management-api/internal/repository"
 )
@@ -17,4 +19,16 @@ func (s *InventoryService) CreateItem(item *entities.InventoryItem) error {
 	// Mock PNL calculation
 	item.PNL = 0
 	return s.repo.Save(item)
+}
+
+func (s *InventoryService) GetItemById(id string) (*entities.InventoryItem, error) {
+	item, err := s.repo.FindById(id)
+	if err != nil {
+		return nil, err
+	}
+	if item == nil {
+		return nil, errors.New("item not found")
+	}
+
+	return item, nil
 }
