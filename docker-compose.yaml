@@ -14,5 +14,12 @@ services:
       - "5432:5432"
     restart: unless-stopped
 
+  inventory-management-api:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
 volumes:
   postgres_data:

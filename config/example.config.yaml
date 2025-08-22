@@ -1,4 +1,4 @@
 env: development
 port: 8080
 database:
-  url: postgresql://myuser:mypassword@localhost:5432/mydatabase
+  url: postgresql://myuser:mypassword@postgres:5432/mydatabase
