@@ -16,7 +16,7 @@ func RegisterInventoryRoutes(router fiber.Router, db *gorm.DB) {
 	validator := validator.New()
 	h := handler.NewInventoryHandler(service, validator)
 
-	router.Get("/:name", h.GetItemSummaryByName)
+	router.Get("/:productName", h.GetItemSummaryByProductName)
 
 	items := router.Group("/items")
 

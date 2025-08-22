@@ -72,7 +72,7 @@ func (s *InventoryService) CalculatePNL(item *entities.InventoryItem) float64 {
 	return pnl
 }
 
-func (s *InventoryService) GetItemSummaryByName(productName string) ([]response.InventoryItemResponse, int, int, int, float64, error) {
+func (s *InventoryService) GetItemSummaryByProductName(productName string) ([]response.InventoryItemResponse, int, int, int, float64, error) {
 	now := time.Now()
 	monthStart := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.Local)
 
