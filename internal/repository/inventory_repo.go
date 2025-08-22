@@ -47,3 +47,16 @@ func (r *InventoryRepository) DeleteById(id string) error {
 	}
 	return nil
 }
+
+func (r *InventoryRepository) UpdateById(id string, item *entities.InventoryItem) error {
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		return err
+	}
+
+	if err := r.db.Model(&entities.InventoryItem{}).Where("id = ?", intID).Updates(item).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -75,3 +75,29 @@ func (h *InventoryHandler) DeleteItemById(c *fiber.Ctx) error {
 	}
 	return c.Status(200).JSON(fiber.Map{"id": id})
 }
+
+func (h *InventoryHandler) UpdateItemById(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	var req request.UpdateItemRequest
+	if err := c.BodyParser(&req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if err := h.validator.Struct(req); err != nil {
+		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	item := entities.InventoryItem{
+		ProductName: req.ProductName,
+		Status:      req.Status,
+		Price:       req.Price,
+		Amount:      req.Amount,
+		At:          req.At,
+	}
+
+	if err := h.service.UpdateItemById(id, &item); err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(200).JSON(fiber.Map{"id": id})
+}
