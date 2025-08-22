@@ -1,0 +1,165 @@
+definitions:
+  entities.Status:
+    enum:
+    - BUY
+    - SELL
+    type: string
+    x-enum-varnames:
+    - BUY
+    - SELL
+  response.CreateItemResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  response.DeleteItemByIdResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  response.GetInventoryByProductResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/response.InventoryItemResponse'
+        type: array
+      latestMonthProfit:
+        type: number
+      productsBoughtInLatestMonth:
+        type: integer
+      productsSoldInLatestMonth:
+        type: integer
+      totalAmount:
+        type: integer
+    type: object
+  response.GetItemByIdResponse:
+    properties:
+      PNL:
+        type: number
+      amount:
+        type: integer
+      at:
+        type: string
+      id:
+        type: integer
+      price:
+        type: number
+      product_name:
+        type: string
+      status:
+        $ref: '#/definitions/entities.Status'
+    type: object
+  response.InventoryItemResponse:
+    properties:
+      PNL:
+        type: number
+      amount:
+        type: integer
+      at:
+        type: string
+      id:
+        type: integer
+      price:
+        type: number
+      productName:
+        type: string
+      status:
+        $ref: '#/definitions/entities.Status'
+    type: object
+  response.UpdateItemByIdResponse:
+    properties:
+      id:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /inventory/{name}:
+    get:
+      description: Get a summary of inventory items by product name
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetInventoryByProductResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Item Summary By Name
+      tags:
+      - inventory
+  /inventory/items:
+    post:
+      description: Create a new inventory item
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.CreateItemResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create Item
+      tags:
+      - inventory
+  /inventory/items/{id}:
+    delete:
+      description: Delete an inventory item by its ID
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.DeleteItemByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete Item By ID
+      tags:
+      - inventory
+    get:
+      description: Get an inventory item by its ID
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GetItemByIdResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Item By ID
+      tags:
+      - inventory
+    put:
+      description: Update an inventory item by its ID
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UpdateItemByIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update Item By ID
+      tags:
+      - inventory
+swagger: "2.0"
